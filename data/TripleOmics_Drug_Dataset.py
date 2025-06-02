@@ -249,3 +249,4 @@ if __name__ == "__main__":
     for i in range(min(5, len(dataset))):
         _, _, _, _, ic50 = dataset[i]
         print(f"샘플 {i}: IC50 = {ic50.item()}")
+        

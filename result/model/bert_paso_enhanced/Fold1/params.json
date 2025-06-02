@@ -1,0 +1,39 @@
+{
+    "fold": 1,
+    "optimizer": "adam",
+    "lr": 0.001,
+    "gradient_clip": 1.0,
+    "smiles_padding_length": 128,
+    "smiles_embedding_size": 384,
+    "number_of_pathways": 619,
+    "train_backbone": false,
+    "smiles_attention_size": 256,
+    "gene_attention_size": 1,
+    "molecule_temperature": 1.0,
+    "gene_temperature": 1.0,
+    "n_heads": 4,
+    "num_layers": 2,
+    "omics_dense_size": 128,
+    "cross_modal_hidden_dim": 512,
+    "dropout": 0.5,
+    "activation_fn": "relu",
+    "batch_norm": true,
+    "drug_sensitivity_processing_parameters": {
+        "parameters": {
+            "min": -8.658382,
+            "max": 13.107465
+        }
+    },
+    "loss_fn": "mse",
+    "early_stopping_patience": 20,
+    "lr_scheduler_patience": 10,
+    "batch_size": 256,
+    "epochs": 200,
+    "num_workers": 4,
+    "stacked_dense_hidden_sizes": [
+        1024,
+        512
+    ],
+    "number_of_genes": 619,
+    "number_of_parameters": 20581379
+}
