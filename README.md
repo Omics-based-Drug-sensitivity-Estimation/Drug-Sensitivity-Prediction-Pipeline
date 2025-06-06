@@ -25,7 +25,7 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
 | GEP        | 1 × 619            |
 | MUT        | 1 × 619            |
 | CNV        | 1 × 619            |
-
+</div>
 
 
 1. **Drug Data** (from GDSC2)
