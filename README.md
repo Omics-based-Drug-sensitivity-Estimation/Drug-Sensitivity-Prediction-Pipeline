@@ -22,12 +22,13 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
    - 619 canonical pathways from MSigDB (c2_kegg_medicus)
    * The three omics datasets—**GEP**, **MUT**, and **CNV**—were post-processed to quantify statistically significant differences between *pathway-in* and *pathway-out* genes, as described in the referenced study ([PLOS Computational Biology, 2024](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012905)).
 
+<div align="center">
 
-    | Omics type | Final matrix shape |
-    | ---------- | ------------------ |
-    | GEP        | $1 \times 619$     |
-    | MUT        | $1 \times 619$     |
-    | CNV        | $1 \times 619$     |
+| Omics type | Final matrix shape |
+| ---------- | ------------------ |
+| GEP        | 1 × 619            |
+| MUT        | 1 × 619            |
+| CNV        | 1 × 619            |
 
 
 
@@ -47,7 +48,7 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
    - Incorporates bond orders, connectivity, and DeepChem features
 
 ### Model Versions
-
+<div align="center">
 | Version | Drug Encoder      | Fusion Method              | Key Features                    |
 |---------|-------------------|----------------------------|--------------------------------|
 | `v1`    | ChemBERTa         | Context Attention + Dense  | Baseline attention fusion      |
@@ -55,6 +56,8 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
 | `v3`    | ChemBERTa         | CLS +  Attention  | Applying CLS at the latest layer          |
 | `v4`    | Graph Transformer | Context Attention + Dense  | Structural drug representation |
 | `v5`    | Graph Transformer | Cross-Attention + MLP| Enhanced interaction modeling    |
+</div>
+   
 ## 🔧 Project Structure
 
 ```
@@ -201,23 +204,8 @@ Configuration is managed via JSON files in the `configs/` directory. Here's a de
 - Data Processing: `pandas`, `scikit-learn`
 - Utilities: `tqdm`
 
-## 👀 Members
-### [Yoonjin Cho](https://github.com/darejinn) (Team Lead)
-Project proposal & overall leading, multi-omics & ChemBERT-based modeling, server management, model experiments, and result visualizations
-
-### [GyungDeok Bae](https://github.com/bgduck33) (Presenter)
-Model development lead, PASO proposal, GNN-based embedding design, server troubleshooting, attention mechanism development, model experiments
-
-### [Junseo Ha](https://github.com/Carolyn-Ha) 
-Graph-based drug representation (DGLlife GIN, AttFP, MPNN), PASO architecture analysis, model experiments
-
-### [Yoonju Cho](https://github.com/whdsbwn)
-Attention mechanism enhancement, PASO baseline model experiments, model experiments
-
-### [Daeseong Kim](https://github.com/lemonardo1)
-Initial ideation, dataset/server (AWS) support, in vitro validation
 
 ## 📬 Contact
 
-Maintainer: [Yoonjin Cho](yoonjincho25@yonsei.ac.kr)  
+Maintainer: [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
 Part of multi-omics predictive modeling research at YAI(Yonsei Artificial Intelligence)
