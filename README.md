@@ -8,7 +8,7 @@
 
 > **This project extends** the paper  
 > *“Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep-learning techniques.”* (PLOS Comput Biol, 2024)
-
+> 
 ---
 
 ## 📋 Table of Contents
@@ -21,12 +21,12 @@
 7. [Outputs & Logging](#outputs--logging)  
 8. [Installation](#installation)  
 9. [Results Snapshot](#results-snapshot)  
-10. [Citation](#citation)  
-11. [Contributing & Contact](#contributing--contact)
+10. [Contributing & Contact](#contributing--contact)
 
 ---
 
 ## Background & Motivation
+
 | Why IC₅₀ prediction matters | Our contribution |
 |-----------------------------|------------------|
 | • Essential for **precision oncology** & drug repositioning<br>• Requires coupling **drug chemistry** with **cell-specific biology** | • **Two interchangeable drug encoders** (ChemBERTa & graph transformer)<br>• **Bi-directional cross-attention** between drug & each omics layer (⇒ 6 interaction maps) |
@@ -35,13 +35,13 @@
 
 ## Data
 ### 1️⃣ Omics (CCLE, 688 cell lines)
-<div align="center">
+
 | Omics type | Pre-processing | Final tensor |
 |------------|---------------|--------------|
 | GEP | Mann-Whitney U | **1 × 619** |
 | MUT | χ²-G test | **1 × 619** |
 | CNV | χ²-G test | **1 × 619** |
-</div> 
+
 *Each entry stores the –log₁₀ P-value measuring pathway-in vs. pathway-out difference.*
 
 ### 2️⃣ Drugs (GDSC2, 233 compounds)
@@ -52,14 +52,13 @@
 
 ## Model Architecture
 ### Drug Encoders
-<div align="center">
 | Name | Versions | Output | Notes |
 |------|----------|--------|-------|
 | **ChemBERTa** | `v1–v3` | 1 × 384 | Pre-trained SMILES language model |
 | **BGD** (graph) | `v4–v5` | 1 × 128 | Graph transformer + DeepChem atom/bond feats |
-</div>
+
 ### Fusion Variants
-<div align="center">
+
 | Version | Drug Encoder | Fusion | Highlight |
 |---------|--------------|--------|-----------|
 | `v1` | ChemBERTa | **Context-Attention** + MLP | Baseline |
@@ -67,7 +66,7 @@
 | `v3` | ChemBERTa | **CLS pooling** + Attention | Simpler, faster |
 | `v4` | Graph | **Context-Attention** | Baseline |
 | `v5` | Graph | **Cross-Attention** + MLP | Deeper interaction |
-</div>
+
 > **Cross-attention design**: drug ↔ omics (GEP, MUT, CNV) in both directions → 6 heads feeding a shared MLP for regression.
 
 ---
@@ -158,8 +157,20 @@ conda activate paso_env
 
 ## Results Snapshot
 
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/a4b6bc42-3e90-4d4f-80c2-3668d2330e41" width="600">
+  <img src="https://github.com/user-attachments/assets/62b4dbd0-f510-4b20-95e9-4789627cb7c5" width="425" alt="Figure 1">
+  <br><em>Figure 1. Drug embedding comparison (Original vs. Modified attention)</em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5f28a37e-4e18-4b83-8b3f-da5945e02404" width="425" alt="Figure 2">
+  <br><em>Figure 2. Cross-attention variant performance</em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a4b6bc42-3e90-4d4f-80c2-3668d2330e41" width="700" alt="Figure 3">
+  <br><em>Figure 3. Pearson r on cell-blinded split (scatter)</em>
 </p>
 
 ---
