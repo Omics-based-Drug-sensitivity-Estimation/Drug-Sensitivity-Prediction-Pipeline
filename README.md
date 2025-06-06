@@ -8,7 +8,7 @@
 
 > **This project extends** the paper  
 > *“Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep-learning techniques.”* (PLOS Comput Biol, 2024)
-> 
+> Maintainer: [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
 ---
 
 ## 📋 Table of Contents
