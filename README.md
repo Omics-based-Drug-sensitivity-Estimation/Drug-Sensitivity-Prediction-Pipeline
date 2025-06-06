@@ -2,6 +2,8 @@
 
 A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data and advanced drug representations. This project builds upon the baseline model introduced in the 2025 paper, [*"Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep learning techniques."*](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012905)
 
+Maintainer: [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
+
 ## 📋 Overview
 
 ### Drug Sensitivity Estimation
@@ -205,6 +207,6 @@ Configuration is managed via JSON files in the `configs/` directory. Here's a de
 
 ## 📬 Contact
 
-Maintainer: [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
-
+Maintainer : [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
+E-mail : yoonjin.cho22@med.yuhs.ac, baegyungduck@gmail.com
 Part of multi-omics predictive modeling research at YAI(Yonsei Artificial Intelligence)
