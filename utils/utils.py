@@ -1,7 +1,6 @@
-import torch
+
+import os, random, numpy as np, torch 
 import torch.nn as nn
-
-
 def get_device():
     return torch.device('cuda' if cuda() else 'cpu')
 
@@ -71,3 +70,23 @@ class Temperature(nn.Module):
 
     def forward(self, data):
         return data / self.temperature
+
+def set_seed(seed: int = 42) -> None:
+    """
+    Make Python / NumPy / PyTorch RNG deterministic.
+
+    Parameters
+    ----------
+    seed : int
+        Seed value to apply to *all* relevant RNGs.
+    """
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    # cuDNN deterministic behaviour (costs a bit of speed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False

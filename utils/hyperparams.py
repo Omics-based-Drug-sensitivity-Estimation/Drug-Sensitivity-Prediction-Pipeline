@@ -1,3 +1,4 @@
+# hyperparams.py
 """Customizable model hyperparameter """
 import torch.optim as optim
 import torch.nn as nn
@@ -38,4 +39,20 @@ OPTIMIZER_FACTORY = {
     'lbfgs': optim.LBFGS,
     'rmsprop': optim.RMSprop,
     'rprop': optim.Rprop
+}
+
+# ──────────────────────────────────────────────────────────────
+# Learning-rate scheduler factory
+# ──────────────────────────────────────────────────────────────
+from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR, ExponentialLR
+
+SCHEDULER_FACTORY = {
+    # plateau on validation loss (default in train.py)
+    "plateau": lambda opt, **kw: ReduceLROnPlateau(
+        opt, mode="min", factor=kw.get("factor", 0.3), patience=kw.get("patience", 3)
+    ),
+    "step": lambda opt, **kw: StepLR(
+        opt, step_size=kw.get("step_size", 10), gamma=kw.get("gamma", 0.1)
+    ),
+    "exp": lambda opt, **kw: ExponentialLR(opt, gamma=kw.get("gamma", 0.95)),
 }

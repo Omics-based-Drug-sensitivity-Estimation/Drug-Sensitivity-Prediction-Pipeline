@@ -1,0 +1,79 @@
+{
+  "drug_sensitivity_min_max": true,
+  "augment_smiles": true,
+  "smiles_start_stop_token": true,
+  "number_of_genes": 619,
+  "smiles_padding_length": 128,
+
+  "smiles_embedding_size": 16,
+  "stacked_dense_hidden_sizes": [1536, 512, 128],
+  "omics_dense_size": 64,
+  "activation_fn": "relu",
+  "dropout": 0.3,
+  "batch_norm": true,
+
+  "filters": [64, 64, 64],
+  "kernel_sizes": [[3, 16], [5, 16], [11, 16]],
+  "smiles_attention_size": 64,
+  "gene_attention_size": 1,
+
+  "molecule_gep_heads": [2, 2, 2, 2, 2],
+  "molecule_cnv_heads": [2, 2, 2, 2, 2],
+  "molecule_mut_heads": [2, 2, 2, 2, 2],
+  "gene_heads": [1, 1, 1, 1, 1],
+  "cnv_heads":  [1, 1, 1, 1, 1],
+  "mut_heads":  [1, 1, 1, 1, 1],
+
+  "n_heads": 2,
+  "num_layers": 4,
+
+  "batch_size": 512,
+  "epochs": 200,
+  "lr": 0.001,
+  "optimizer": "adam",
+  "loss_fn": "mse",
+
+  "scheduler": "plateau",
+  "scheduler_kw": { "patience": 3, "factor": 0.3 },
+
+  "train_backbone": false,
+  "save_model": 25,
+
+  "num_workers": 4,
+  "dataset_device": "cpu",
+
+  "folds": 10,
+  "seed": 42,
+
+  "embed_scale_grad": false,
+  "smiles_vocabulary_size": 56,
+
+  "drug_sensitivity_processing_parameters": {
+    "processing": "min_max",
+    "parameters": { "min": -8.658382, "max": 13.107465 }
+  },
+
+  "number_of_parameters": 12537506,
+
+  "train_dataset_args": {
+    "drug_sens_csv": "data/10_fold_data/mixed/MixedSet_train_Fold0.csv",
+    "smiles_csv":           "data/CCLE-GDSC-SMILES.csv",
+    "gep_csv":              "data/GEP_Wilcoxon_Test_Analysis_Log10_P_value_C2_KEGG_MEDICUS.csv",
+    "cnv_csv":              "data/CNV_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
+    "mut_csv":              "data/MUT_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
+
+    "standardise_omics": true,
+    "minmax_ic50": true
+  },
+
+  "test_dataset_args": {
+    "drug_sens_csv": "data/10_fold_data/mixed/MixedSet_test_Fold0.csv",
+    "smiles_csv":           "data/CCLE-GDSC-SMILES.csv",
+    "gep_csv":              "data/GEP_Wilcoxon_Test_Analysis_Log10_P_value_C2_KEGG_MEDICUS.csv",
+    "cnv_csv":              "data/CNV_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
+    "mut_csv":              "data/MUT_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
+
+    "standardise_omics": true,
+    "minmax_ic50": true
+  }
+}
