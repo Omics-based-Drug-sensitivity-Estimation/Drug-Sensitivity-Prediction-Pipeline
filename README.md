@@ -1,212 +1,175 @@
+
 # 🔬 Drug Sensitivity Prediction Pipeline
+*Modular, end-to-end IC₅₀ prediction using multi-omics pathway features and advanced drug representations.*
 
-A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data and advanced drug representations. This project builds upon the baseline model introduced in the 2025 paper, [*"Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep learning techniques."*](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012905)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 📋 Overview
+> **This project extends** the paper  
+> *“Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep-learning techniques.”* (PLOS Comput Biol, 2024)
 
-### Drug Sensitivity Estimation
-- IC50 (half maximal inhibitory concentration) represents the concentration of a drug required to inhibit 50% of cell viability or activity
-- Critical for personalized medicine and drug discovery
-- Combines multi-omics data with drug structural information for accurate prediction
+---
 
-### Data Sources
-1. **Omics Data** (from CCLE database)
-   - 688 cell lines
-     - Gene Expression (GEP)
-     - Mutation (MUT)
-     - Copy Number Variation (CNV)
-   - 619 canonical pathways from MSigDB (c2_kegg_medicus)
-   * The three omics datasets—**GEP**, **MUT**, and **CNV**—were post-processed to quantify statistically significant differences between *pathway-in* and *pathway-out* genes, as described in the referenced study ([PLOS Computational Biology, 2024](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012905)).
+## 📋 Table of Contents
+1. [Background & Motivation](#background--motivation)  
+2. [Data](#data)  
+3. [Model Architecture](#model-architecture)  
+4. [Repository Structure](#repository-structure)  
+5. [Quick Start](#quick-start)  
+6. [Configuration](#configuration)  
+7. [Outputs & Logging](#outputs--logging)  
+8. [Installation](#installation)  
+9. [Results Snapshot](#results-snapshot)  
+10. [Citation](#citation)  
+11. [Contributing & Contact](#contributing--contact)
 
+---
+
+## Background & Motivation
+| Why IC₅₀ prediction matters | Our contribution |
+|-----------------------------|------------------|
+| • Essential for **precision oncology** & drug repositioning<br>• Requires coupling **drug chemistry** with **cell-specific biology** | • **Two interchangeable drug encoders** (ChemBERTa & graph transformer)<br>• **Bi-directional cross-attention** between drug & each omics layer (⇒ 6 interaction maps) |
+
+---
+
+## Data
+### 1️⃣ Omics (CCLE, 688 cell lines)
 <div align="center">
+| Omics type | Pre-processing | Final tensor |
+|------------|---------------|--------------|
+| GEP | Mann-Whitney U | **1 × 619** |
+| MUT | χ²-G test | **1 × 619** |
+| CNV | χ²-G test | **1 × 619** |
+</div> 
+*Each entry stores the –log₁₀ P-value measuring pathway-in vs. pathway-out difference.*
 
-| Omics type | Final matrix shape |
-| ---------- | ------------------ |
-| GEP        | 1 × 619            |
-| MUT        | 1 × 619            |
-| CNV        | 1 × 619            |
-</div>
+### 2️⃣ Drugs (GDSC2, 233 compounds)
+* SMILES strings  
+* Matched IC₅₀ values for each *(drug, cell-line)* pair
 
+---
 
-2. **Drug Data** (from GDSC2)
-   - SMILES representations for 233 drugs
-   - IC50 values for 688 cell lines
-
-## 🧠 Model Architecture
-
+## Model Architecture
 ### Drug Encoders
-1. **ChemBERTa-based** (`v1`, `v2`, `v3`)
-   - Pre-trained transformer model for SMILES sequences
-   - Output: [128, 384] embedding per drug
-
-2. **Graph-based (BGD)** (`v4`, `v5`)
-   - Graph Neural Network processing
-   - Incorporates bond orders, connectivity, and DeepChem features
-
-### Model Versions
-
 <div align="center">
-
-| Version | Drug Encoder      | Fusion Method              | Key Features                    |
-|---------|-------------------|----------------------------|--------------------------------|
-| `v1`    | ChemBERTa         | Context Attention + Dense  | Baseline attention fusion      |
-| `v2`    | ChemBERTa         | Cross-Attention + MLP        | Enhanced interaction modeling  |
-| `v3`    | ChemBERTa         | CLS +  Attention  | Applying CLS at the latest layer          |
-| `v4`    | Graph Transformer | Context Attention + Dense  | Structural drug representation |
-| `v5`    | Graph Transformer | Cross-Attention + MLP| Enhanced interaction modeling    |
+| Name | Versions | Output | Notes |
+|------|----------|--------|-------|
+| **ChemBERTa** | `v1–v3` | 1 × 384 | Pre-trained SMILES language model |
+| **BGD** (graph) | `v4–v5` | 1 × 128 | Graph transformer + DeepChem atom/bond feats |
 </div>
-   
-## 🔧 Project Structure
+### Fusion Variants
+<div align="center">
+| Version | Drug Encoder | Fusion | Highlight |
+|---------|--------------|--------|-----------|
+| `v1` | ChemBERTa | **Context-Attention** + MLP | Baseline |
+| `v2` | ChemBERTa | **Cross-Attention** + MLP | Deeper interaction |
+| `v3` | ChemBERTa | **CLS pooling** + Attention | Simpler, faster |
+| `v4` | Graph | **Context-Attention** | Baseline |
+| `v5` | Graph | **Cross-Attention** + MLP | Deeper interaction |
+</div>
+> **Cross-attention design**: drug ↔ omics (GEP, MUT, CNV) in both directions → 6 heads feeding a shared MLP for regression.
 
-```
+---
+
+## Repository Structure
+```text
 PASO/
+├── configs/
 ├── train/
-│   └── train.py                    # Main training script
+│   └── train.py
 ├── models/
-│   ├── ChemBERT_Models.py         # v1-v3 implementations
-│   ├── BGD_Models.py              # v4-v5 implementations
-│   └── model.py                   # Model factory
+│   ├── ChemBERT_Models.py
+│   ├── BGD_Models.py
+│   └── model.py
 ├── data/
-│   ├── TripleOmics_ChemBERT_Dataset.py   # ChemBERTa dataset
-│   ├── TripleOmics_BGD_Dataset.py        # BGD dataset
-│   ├── CCLE-GDSC-SMILES.csv              # Drug SMILES data
-│   ├── MUDICUS_Omic_619_pathways.pkl     # Pathway data
-│   ├── GEP_Wilcoxon_Test_Analysis_Log10_P_value_C2_KEGG_MEDICUS.csv
-│   ├── MUT_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv
-│   └── CNV_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv
+│   ├── TripleOmics_ChemBERT_Dataset.py
+│   ├── TripleOmics_BGD_Dataset.py
+│   └── … (omics & SMILES CSVs)
 ├── utils/
-│   ├── cross_attention.py         # Cross attention implementation
-│   ├── drug_embedding.py          # Drug embedding modules
-│   ├── layers.py                  # Network layers
-│   ├── loss_functions.py          # Pearson, RMSE, R2 metrics
-│   ├── hyperparams.py             # Optimizer and loss registries
-│   └── utils.py                   # Device and scaling utilities
-├── analysis.py                    # Data analysis and visualization
-└── debug_utils.py                 # Debugging utilities
-```
+├── analysis.py
+└── debug_utils.py
+````
 
-## 🚀 Quick Start
+---
+
+## Quick Start
 
 ```bash
+# create & activate environment
+conda env create -f environment.yml
+conda activate paso_env
+
+# train ChemBERTa cross-attention model
 python train/train.py \
   --model_version v2 \
   --config_path configs/paso_v2_config.json
 ```
 
-## ⚙️ Configuration
+Replace `v2` with `v5` for the graph version.
 
-Configuration is managed via JSON files in the `configs/` directory. Here's a detailed example with comments:
+---
 
-```json
+## Configuration
+
+Key fields (see full JSON in `configs/`):
+
+```jsonc
 {
-  // Data preprocessing settings
-  "drug_sensitivity_min_max": true,        // Normalize IC50 values
-  "augment_smiles": true,                  // Enable SMILES augmentation
-  "smiles_start_stop_token": true,         // Add start/stop tokens to SMILES
-  "number_of_genes": 619,                  // Number of pathways
-  "smiles_padding_length": 128,            // Maximum SMILES sequence length
-
-  // Model architecture parameters
-  "smiles_embedding_size": 16,             // Drug embedding dimension
-  "stacked_dense_hidden_sizes": [1536, 512, 128],  // MLP layer sizes
-  "omics_dense_size": 64,                  // Omics embedding dimension
-  "activation_fn": "relu",                 // Activation function
-  "dropout": 0.3,                          // Dropout rate
-  "batch_norm": true,                      // Enable batch normalization
-
-  // CNN parameters for SMILES processing
-  "filters": [64, 64, 64],                 // CNN filter sizes
-  "kernel_sizes": [[3, 16], [5, 16], [11, 16]],  // CNN kernel sizes
-  "smiles_attention_size": 64,             // Drug attention dimension
-  "gene_attention_size": 1,                // Gene attention dimension
-
-  // Multi-head attention parameters
-  "molecule_gep_heads": [2, 2, 2, 2, 2],   // Heads for drug-GEP attention
-  "molecule_cnv_heads": [2, 2, 2, 2, 2],   // Heads for drug-CNV attention
-  "molecule_mut_heads": [2, 2, 2, 2, 2],   // Heads for drug-MUT attention
-  "gene_heads": [1, 1, 1, 1, 1],          // Heads for gene attention
-  "cnv_heads": [1, 1, 1, 1, 1],           // Heads for CNV attention
-  "mut_heads": [1, 1, 1, 1, 1],           // Heads for MUT attention
-
-  // Transformer parameters
-  "n_heads": 2,                            // Number of attention heads
-  "num_layers": 4,                         // Number of transformer layers
-
-  // Training parameters
-  "batch_size": 512,                       // Batch size
-  "epochs": 200,                           // Maximum epochs
-  "lr": 0.001,                             // Learning rate
-  "optimizer": "adam",                     // Optimizer choice
-  "loss_fn": "mse",                        // Loss function
-
-  // Learning rate scheduling
-  "scheduler": "plateau",                  // LR scheduler type
-  "scheduler_kw": {                        // Scheduler parameters
-    "patience": 3,                         // Epochs to wait before reducing LR
-    "factor": 0.3                          // LR reduction factor
-  },
-
-  // Model saving and training control
-  "train_backbone": false,                 // Whether to train backbone(for chemberta)
-  "save_model": 25,                        // Save model every N epochs
-
-  // Hardware settings
-  "num_workers": 4,                        // Number of data loading workers
-  "dataset_device": "cpu",                 // Device for dataset processing
-
-  // Cross-validation settings
-  "folds": 10,                             // Number of cross-validation folds
-  "seed": 42,                              // Random seed
-
-  // Additional settings
-  "embed_scale_grad": false,               // Scale gradients for embeddings
-  "smiles_vocabulary_size": 56,            // Size of SMILES vocabulary
-
-  // IC50 processing parameters
-  "drug_sensitivity_processing_parameters": {
-    "processing": "min_max",               // Normalization method
-    "parameters": {                        // Normalization range
-      "min": -8.658382,
-      "max": 13.107465
-    }
-  },
-
-  // Dataset paths
-  "train_dataset_args": {
-    "drug_sens_csv": "data/10_fold_data/mixed/MixedSet_train_Fold0.csv",
-    "smiles_csv": "data/CCLE-GDSC-SMILES.csv",
-    "gep_csv": "data/GEP_Wilcoxon_Test_Analysis_Log10_P_value_C2_KEGG_MEDICUS.csv",
-    "cnv_csv": "data/CNV_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
-    "mut_csv": "data/MUT_Cardinality_Analysis_of_Variance_C2_KEGG_MEDICUS.csv",
-    "standardise_omics": true,             // Standardize omics data
-    "minmax_ic50": true                    // Normalize IC50 values
-  },
-
-  "test_dataset_args": {
-    // Similar structure to train_dataset_args
-    // Paths point to test set data
-  }
+  "smiles_padding_length": 128,
+  "number_of_genes": 619,
+  "dropout": 0.3,
+  "epochs": 200,
+  "batch_size": 512,
+  "optimizer": "adam",
+  "scheduler": "plateau",
+  "folds": 10
 }
 ```
 
-## 📊 Output
+---
 
-- Best models per fold (saved in `result/model/.../weights`)
-- Performance metrics (MSE, Pearson correlation, R²)
-- Training logs and visualizations
+## Outputs & Logging
 
-## 🛠️ Dependencies
+```
+results/
+└── v2/
+    ├── Fold1/
+    │   ├── weights.pt
+    │   └── metrics.json   # MSE, RMSE, Pearson, R²
+    └── …
+```
 
-- Deep Learning: `torch`, `transformers`
-- Chemistry: `rdkit`, `deepchem`
-- Data Processing: `pandas`, `scikit-learn`
-- Utilities: `tqdm`
+Run `analysis.py` for plots and attention heatmaps.
 
+---
 
-## 📬 Contact
+## Installation
 
-Maintainer : [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
+```bash
+git clone https://github.com/Omics-based-Drug-sensitivity-Estimation/Drug-Sensitivity-Prediction-Pipeline.git
+cd Drug-Sensitivity-Prediction-Pipeline
+conda env create -f environment.yml
+conda activate paso_env
+# or: pip install torch transformers rdkit-pypi deepchem dgl-lifesci pandas scikit-learn tqdm
+```
 
-E-mail : yoonjin.cho22@med.yuhs.ac, baegyungduck@gmail.com
+---
 
-Part of multi-omics predictive modeling research at YAI(Yonsei Artificial Intelligence)
+## Results Snapshot
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a4b6bc42-3e90-4d4f-80c2-3668d2330e41" width="600">
+</p>
+
+---
+
+## Contributing & Contact
+
+Pull requests and issues are welcome!
+
+* **Yoonjin Cho** — [yoonjin.cho22@med.yuhs.ac](mailto:yoonjin.cho22@med.yuhs.ac) · [@darejinn](https://github.com/darejinn)
+* **GyungDeok Bae** — [baegyungduck@gmail.com](mailto:baegyungduck@gmail.com) · [@bgduck33](https://github.com/bgduck33)
+
+```
+
