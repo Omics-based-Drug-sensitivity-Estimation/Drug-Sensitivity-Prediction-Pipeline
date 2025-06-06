@@ -28,7 +28,7 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
 </div>
 
 
-1. **Drug Data** (from GDSC2)
+2. **Drug Data** (from GDSC2)
    - SMILES representations for 233 drugs
    - IC50 values for 688 cell lines
 
