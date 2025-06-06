@@ -44,7 +44,9 @@ A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data
    - Incorporates bond orders, connectivity, and DeepChem features
 
 ### Model Versions
+
 <div align="center">
+
 | Version | Drug Encoder      | Fusion Method              | Key Features                    |
 |---------|-------------------|----------------------------|--------------------------------|
 | `v1`    | ChemBERTa         | Context Attention + Dense  | Baseline attention fusion      |
