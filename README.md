@@ -1,8 +1,4 @@
-# 💊 MultiOmics based Drug Sensitivity Estimation
-## 🏆 2025 Spring 6th YAICON SECOND PRIZE
-
-
-## 🔬 Drug Sensitivity Prediction Pipeline
+# 🔬 Drug Sensitivity Prediction Pipeline
 
 A modular pipeline for drug sensitivity (IC50) prediction using multi-omics data and advanced drug representations. This project builds upon the baseline model introduced in the 2025 paper, [*"Anticancer drug response prediction integrating multi-omics pathway-based difference features and multiple deep learning techniques."*](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012905)
 
