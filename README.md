@@ -206,4 +206,5 @@ Configuration is managed via JSON files in the `configs/` directory. Here's a de
 ## 📬 Contact
 
 Maintainer: [Yoonjin Cho](https://github.com/darejinn), [GyungDeok Bae](https://github.com/bgduck33)
+
 Part of multi-omics predictive modeling research at YAI(Yonsei Artificial Intelligence)
